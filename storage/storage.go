@@ -8,6 +8,7 @@ import (
 	"github.com/ipfs/go-cid"
 
 	proof "github.com/filecoin-project/specs-actors/actors/runtime/proof"
+	"github.com/filecoin-project/lotus/extern/sector-storage/service/mod"
 )
 
 type Data = io.Reader
@@ -42,11 +43,11 @@ type Range struct {
 }
 
 type Sealer interface {
-	SealPreCommit1(ctx context.Context, sector abi.SectorID, ticket abi.SealRandomness, pieces []abi.PieceInfo) (PreCommit1Out, error)
-	SealPreCommit2(ctx context.Context, sector abi.SectorID, pc1o PreCommit1Out) (SectorCids, error)
+	SealPreCommit1(ctx context.Context, sector abi.SectorID, ticket abi.SealRandomness, pieces []abi.PieceInfo, extra *mod.ExtraInfo) (PreCommit1Out, error)
+	SealPreCommit2(ctx context.Context, sector abi.SectorID, pc1o PreCommit1Out,  extra *mod.ExtraInfo) (SectorCids, error)
 
-	SealCommit1(ctx context.Context, sector abi.SectorID, ticket abi.SealRandomness, seed abi.InteractiveSealRandomness, pieces []abi.PieceInfo, cids SectorCids) (Commit1Out, error)
-	SealCommit2(ctx context.Context, sector abi.SectorID, c1o Commit1Out) (Proof, error)
+	SealCommit1(ctx context.Context, sector abi.SectorID, ticket abi.SealRandomness, seed abi.InteractiveSealRandomness, pieces []abi.PieceInfo, cids SectorCids, extra *mod.ExtraInfo) (Commit1Out, error)
+	SealCommit2(ctx context.Context, sector abi.SectorID, c1o Commit1Out,extra *mod.ExtraInfo) (Proof, error)
 
 	FinalizeSector(ctx context.Context, sector abi.SectorID, keepUnsealed []Range) error
 
