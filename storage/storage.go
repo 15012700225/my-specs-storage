@@ -23,7 +23,9 @@ type Storage interface {
 	//  storage are responsible for assigning sector IDs)
 	NewSector(ctx context.Context, sector SectorRef) error
 	// Add a piece to an existing *unsealed* sector
-	AddPiece(ctx context.Context, sector SectorRef, pieceSizes []abi.UnpaddedPieceSize, newPieceSize abi.UnpaddedPieceSize, pieceData Data) (abi.PieceInfo, error)
+	AddPiece(ctx context.Context, sector SectorRef, pieceSizes []abi.UnpaddedPieceSize, newPieceSizes abi.UnpaddedPieceSize, pieceData Data) (abi.PieceInfo, error)
+	//
+	AddPieceEx(ctx context.Context, sector SectorRef, pieceSizes []abi.UnpaddedPieceSize, newPieceSizes []abi.UnpaddedPieceSize, extra *mod.ExtraInfo) error
 }
 
 type Prover interface {
@@ -54,7 +56,7 @@ type Sealer interface {
 	SealCommit1(ctx context.Context, sector SectorRef, ticket abi.SealRandomness, seed abi.InteractiveSealRandomness, pieces []abi.PieceInfo, cids SectorCids, extra *mod.ExtraInfo) (Commit1Out, error)
 	SealCommit2(ctx context.Context, sector SectorRef, c1o Commit1Out,extra *mod.ExtraInfo) (Proof, error)
 
-	FinalizeSector(ctx context.Context, sector SectorRef, keepUnsealed []Range) error
+	FinalizeSector(ctx context.Context, sector SectorRef, keepUnsealed []Range, extra *mod.ExtraInfo) error
 
 	// ReleaseUnsealed marks parts of the unsealed sector file as safe to drop
 	//  (called by the fsm on restart, allows storage to keep no persistent
